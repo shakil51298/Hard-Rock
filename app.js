@@ -11,9 +11,13 @@ const songName = () => {
 
 const SearchSong = async (searchText) => {
     document.getElementById('songName').innerHTML = '';
-    const res = await fetch('https://api.lyrics.ovh/suggest/' + searchText + '');
-    const data = await res.json();
-    displaySong(data.data);
+    try {
+        const res = await fetch('https://api.lyrics.ovh/suggest/' + searchText + '');
+        const data = await res.json();
+        displaySong(data.data);
+    } catch (error) {
+        DisplayErr('something Went Wrong!! please try again');
+    }
 
 }
 const displaySong = songs => {
@@ -39,26 +43,44 @@ const displaySong = songs => {
     });
 }
 
-const getLyric = async (artist, title) => {
-    document.getElementById('showLyrics').innerHTML = '';
+const getLyric = (artist, title) => {
+
     const url = (`https://api.lyrics.ovh/v1/${artist}/${title}`)
-    const res = await fetch(url);
-    const data = await res.json();
-    displayLyrics(data.lyrics);
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            displayLyrics(data.lyrics);
+        })
+        .catch(err => DisplayErr('something Wrong'))
 
 
 }
+// const getLyric = async (artist, title) => {
+//     document.getElementById('showLyrics').innerHTML = '';
+//     const url = (`https://api.lyrics.ovh/v1/${artist}/${title}`)
+//     const res = await fetch(url);
+//     const data = await res.json();
+//     displayLyrics(data.lyrics);
 
+
+// }
 const displayLyrics = (lyrics) => {
 
     const Modal = document.getElementById('showLyrics');
     Modal.innerHTML = `
-        <p>${lyrics}</p>
-        <button onclick="showMainPage(Modal.innerHTML)">Go Back</button>
+        <p >${lyrics}</p>
     `;
-    Showhide(Modal);
+    const p = document.createElement('p');
+    p.innerText = lyrics;
+
+    hide(Modal)
 }
-const Showhide = (Modal) => {
+const hide = (Modal) => {
     document.getElementById('hideSong').style.display = "none";
     Modal.style.display = "block"
+}
+
+const DisplayErr = error => {
+    const Err = document.getElementById('errMsg')
+    Err.innerText = error;
 }
