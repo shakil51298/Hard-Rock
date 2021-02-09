@@ -5,11 +5,16 @@ const songName = () => {
         alert('please enter valid name')
     } else {
 
-        fetch('https://api.lyrics.ovh/suggest/' + searchText + '')
-            .then(res => res.json())
-            .then(data => displaySong(data.data))
-        document.getElementById('songName').innerHTML = '';
+        SearchSong(searchText)
     }
+}
+
+const SearchSong = async (searchText) => {
+    document.getElementById('songName').innerHTML = '';
+    const res = await fetch('https://api.lyrics.ovh/suggest/' + searchText + '');
+    const data = await res.json();
+    displaySong(data.data);
+
 }
 const displaySong = songs => {
     songs.forEach(song => {
@@ -34,30 +39,26 @@ const displaySong = songs => {
     });
 }
 
-const getLyric = (artist, title) => {
-    
-    const url =(`https://api.lyrics.ovh/v1/${artist}/${title}`)
-    fetch(url)
-    .then(res => res.json())
-    .then(data => {
-        displayLyrics(data.lyrics);
-    })
-    
-    
+const getLyric = async (artist, title) => {
+    document.getElementById('showLyrics').innerHTML = '';
+    const url = (`https://api.lyrics.ovh/v1/${artist}/${title}`)
+    const res = await fetch(url);
+    const data = await res.json();
+    displayLyrics(data.lyrics);
+
+
 }
 
-const displayLyrics = (lyrics)=>{
-    
+const displayLyrics = (lyrics) => {
+
     const Modal = document.getElementById('showLyrics');
-    Modal.innerHTML=`
-        <p >${lyrics}</p>
+    Modal.innerHTML = `
+        <p>${lyrics}</p>
+        <button onclick="showMainPage(Modal.innerHTML)">Go Back</button>
     `;
-    const p = document.createElement('p');
-    p.innerText=lyrics;
-    
-    hide(Modal)
+    Showhide(Modal);
 }
-const hide =(Modal) =>{
-    document.getElementById('hideSong').style.display="none";
-    Modal.style.display="block"
+const Showhide = (Modal) => {
+    document.getElementById('hideSong').style.display = "none";
+    Modal.style.display = "block"
 }
